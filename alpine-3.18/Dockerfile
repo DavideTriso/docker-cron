@@ -2,6 +2,8 @@ FROM    alpine:3.18
 
 USER    root
 
+ENV     TZ=UTC
+
 RUN     mkdir -p /etc/periodic/1min \
         && mkdir -p /etc/periodic/5min \
         && mkdir -p /etc/periodic/15min \
@@ -15,7 +17,11 @@ RUN     mkdir -p /etc/periodic/1min \
         && echo "*/5     *       *       *       *       run-parts /etc/periodic/5min" >> /etc/crontabs/root \
         && echo "*/20    *       *       *       *       run-parts /etc/periodic/20min" >> /etc/crontabs/root \
         && echo "*/30    *       *       *       *       run-parts /etc/periodic/30min" >> /etc/crontabs/root \
-        && apk add curl
+        && apk update --no-cache \
+        && apk add --update --no-cache \
+                curl \
+                tzdata \
+                nano
 
 ENTRYPOINT chown -R root:root /etc/periodic \
         && chmod -R +x /etc/periodic \
